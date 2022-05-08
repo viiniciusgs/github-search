@@ -5,6 +5,9 @@ const GET_USER = gql`
   query GetUser($username: String!) {
     user(login: $username) {
       name
+      login
+      bio
+      avatarUrl
     }
   }
 `
@@ -12,6 +15,9 @@ const GET_USER = gql`
 interface User {
   username?: string
   name?: string
+  login?: string
+  bio?: string
+  avatarUrl?: string
 }
 
 interface UserData {
@@ -48,8 +54,25 @@ function App() {
 
       {data && (
         <>
-          <h1 className="mt-4 text-white">Hello World!</h1>
-          <p className="text-blue">{data?.user.name}</p>
+          <div className="w-full mt-10 px-10 py-10 flex gap-10 border border-white rounded-t-lg">
+            <img
+              className="w-40 h-40 rounded-full"
+              src={data?.user.avatarUrl}
+              alt="avatar"
+            />
+            <div className="w-full text-white">
+              <p className="text-3xl font-semibold">{data?.user.name}</p>
+              <a
+                className="text-base text-blue"
+                href={`https://github.com/${data?.user.login}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {data?.user.login}
+              </a>
+              <p className="mt-4 text-base">{data?.user.bio}</p>
+            </div>
+          </div>
         </>
       )}
     </main>
