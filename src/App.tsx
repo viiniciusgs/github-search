@@ -8,9 +8,28 @@ const GET_USER = gql`
       login
       bio
       avatarUrl
+      repositories(first: 100, privacy: PUBLIC) {
+        edges {
+          node {
+            id
+            name
+            description
+            url
+          }
+        }
+      }
     }
   }
 `
+
+interface Repository {
+  node: {
+    id: string
+    name: string
+    description: string
+    url: string
+  }
+}
 
 interface User {
   username?: string
@@ -18,6 +37,9 @@ interface User {
   login?: string
   bio?: string
   avatarUrl?: string
+  repositories?: {
+    edges: Repository[]
+  }
 }
 
 interface UserData {
@@ -26,6 +48,8 @@ interface UserData {
 
 function App() {
   const [username, setUsername] = useState<string>('')
+  const [repositoriesIsVisible, setRepositoriesIsVisible] =
+    useState<boolean>(false)
 
   const [getUser, { loading, error, data }] = useLazyQuery<UserData, User>(
     GET_USER
@@ -35,7 +59,7 @@ function App() {
   if (error) return <p>Error :(</p>
 
   return (
-    <main className="h-screen px-52 py-20 bg-black flex flex-col items-center justify-start font-body text-white">
+    <main className="min-h-screen h-full px-52 py-20 bg-black flex flex-col items-center justify-start font-body text-white">
       <div className="w-full flex justify-between gap-4">
         <input
           className="w-full px-6 py-4 border border-white rounded-lg bg-black font-light"
@@ -73,6 +97,32 @@ function App() {
               <p className="mt-4 text-base">{data?.user.bio}</p>
             </div>
           </div>
+
+          <button
+            className="w-full py-5 border border-white rounded-b-lg hover:text-blue"
+            onClick={() => setRepositoriesIsVisible(!repositoriesIsVisible)}
+          >
+            Repositórios
+          </button>
+
+          {repositoriesIsVisible && (
+            <div className="w-full mt-16 grid grid-cols-2 gap-2">
+              {data?.user?.repositories?.edges.map((repository: Repository) => (
+                <a
+                  className="w-full px-6 py-4 border border-blue rounded-lg"
+                  key={repository.node.id}
+                  href={repository.node.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <p className="mb-2 text-lg font-bold">
+                    {repository.node.name}
+                  </p>
+                  <p className="text-sm">{repository.node.description}</p>
+                </a>
+              ))}
+            </div>
+          )}
         </>
       )}
     </main>
