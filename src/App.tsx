@@ -8,6 +8,7 @@ const GET_USER = gql`
       login
       bio
       avatarUrl
+      url
       repositories(first: 100, privacy: PUBLIC) {
         edges {
           node {
@@ -37,6 +38,7 @@ interface User {
   login?: string
   bio?: string
   avatarUrl?: string
+  url?: string
   repositories?: {
     edges: Repository[]
   }
@@ -55,12 +57,18 @@ function App() {
     GET_USER
   )
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error :(</p>
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    getUser({ variables: { username } })
+    setRepositoriesIsVisible(false)
+  }
 
   return (
     <main className="min-h-screen h-full px-52 py-20 bg-black flex flex-col items-center justify-start font-body text-white">
-      <div className="w-full flex justify-between gap-4">
+      <form
+        className="w-full flex justify-between gap-4"
+        onSubmit={e => handleSubmit(e)}
+      >
         <input
           className="w-full px-6 py-4 border border-white rounded-lg bg-black font-light"
           type="text"
@@ -70,11 +78,20 @@ function App() {
         />
         <button
           className="px-12 py-4 rounded-lg bg-blue hover:drop-shadow-md hover:contrast-125 font-semibold"
-          onClick={() => getUser({ variables: { username } })}
+          type="submit"
         >
           buscar
         </button>
-      </div>
+      </form>
+
+      {loading && <p className="mt-4">Carregando...</p>}
+
+      {error && (
+        <p className="mt-4">
+          Ops, aconteceu algum erro! Verifique o usuário digitado e tente
+          novamente.
+        </p>
+      )}
 
       {data && (
         <>
@@ -88,7 +105,7 @@ function App() {
               <p className="text-3xl font-semibold">{data?.user.name}</p>
               <a
                 className="text-base text-blue"
-                href={`https://github.com/${data?.user.login}`}
+                href={data?.user.url}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -109,7 +126,7 @@ function App() {
             <div className="w-full mt-16 grid grid-cols-2 gap-2">
               {data?.user?.repositories?.edges.map((repository: Repository) => (
                 <a
-                  className="w-full px-6 py-4 border border-blue rounded-lg"
+                  className="w-full px-6 py-4 border border-blue rounded-lg hover:bg-blue"
                   key={repository.node.id}
                   href={repository.node.url}
                   target="_blank"
