@@ -64,20 +64,20 @@ function App() {
   }
 
   return (
-    <main className="min-h-screen h-full px-52 py-20 bg-black flex flex-col items-center justify-start font-body text-white">
+    <main className="min-h-screen h-full px-52 md:px-4 py-20 md:py-4 bg-black flex flex-col items-center justify-start font-body text-white">
       <form
-        className="w-full flex justify-between gap-4"
+        className="w-full flex justify-between gap-4 md:gap-1"
         onSubmit={e => handleSubmit(e)}
       >
         <input
-          className="w-full px-6 py-4 border border-white rounded-lg bg-black font-light"
+          className="w-full px-6 md:px-4 py-4 md:py-2 border border-white rounded-lg bg-black font-light"
           type="text"
           placeholder="digite um usuário do github..."
           value={username}
           onChange={e => setUsername(e.target.value)}
         />
         <button
-          className="px-12 py-4 rounded-lg bg-blue hover:drop-shadow-md hover:contrast-125 font-semibold"
+          className="px-12 md:px-6 py-4 rounded-lg bg-blue hover:drop-shadow-md hover:contrast-125 font-semibold"
           type="submit"
         >
           buscar
@@ -95,14 +95,16 @@ function App() {
 
       {data && (
         <>
-          <div className="w-full mt-10 px-10 py-10 flex gap-10 border border-white rounded-t-lg">
+          <div className="w-full mt-10 px-10 py-10 flex gap-10 border border-white rounded-t-lg md:flex-col md:items-center">
             <img
               className="w-40 h-40 rounded-full"
               src={data?.user.avatarUrl}
               alt="avatar"
             />
-            <div className="w-full text-white">
-              <p className="text-3xl font-semibold">{data?.user.name}</p>
+            <div className="w-full text-white md:flex md:flex-col md:items-center">
+              <p className="text-3xl md:text-2xl font-semibold md:text-center">
+                {data?.user.name}
+              </p>
               <a
                 className="text-base text-blue"
                 href={data?.user.url}
@@ -111,7 +113,7 @@ function App() {
               >
                 {data?.user.login}
               </a>
-              <p className="mt-4 text-base">{data?.user.bio}</p>
+              <p className="mt-4 text-base md:text-center">{data?.user.bio}</p>
             </div>
           </div>
 
@@ -123,7 +125,7 @@ function App() {
           </button>
 
           {repositoriesIsVisible && (
-            <div className="w-full mt-16 grid grid-cols-2 gap-2">
+            <div className="w-full mt-16 grid grid-cols-2 md:grid-cols-1 gap-2">
               {data?.user?.repositories?.edges.map((repository: Repository) => (
                 <a
                   className="w-full px-6 py-4 border border-blue rounded-lg hover:bg-blue"

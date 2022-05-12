@@ -9,6 +9,9 @@ module.exports = {
     fontFamily: {
       'body': ['Open Sans', 'sans-serif'],
     },
+    screens: {
+      'md': {'max': '768px'}
+    },
     extend: {},
   },
   plugins: [],
